@@ -38,7 +38,7 @@ def test_grade_assignment_cross(client, h_teacher_2):
         }
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 401
     data = response.json
 
     assert data['error'] == 'FyleError'
@@ -95,7 +95,26 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
         }
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 401
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_grade_assignment_submitted_assignment(client, h_teacher_1):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json
+
+    assert 'data' in data
+    graded_assignment = data['data']
+    assert graded_assignment['id'] == 1
+    assert graded_assignment['grade'] == "A"

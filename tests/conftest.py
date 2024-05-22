@@ -1,7 +1,7 @@
 import pytest
 import json
 from tests import app
-
+from core import db
 
 @pytest.fixture
 def client():
@@ -66,3 +66,22 @@ def h_principal():
     }
 
     return headers
+
+
+@pytest.fixture(scope='function')
+def test_client():
+
+    with app.app_context():
+        db.create_all()
+        yield app.test_client()
+        db.session.remove()
+        # db.drop_all()
+
+@pytest.fixture(scope='function')
+def app_context():
+
+    with app.app_context():
+        db.create_all()
+        yield
+        db.session.remove()
+        # db.drop_all()

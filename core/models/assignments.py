@@ -80,7 +80,7 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
         assertions.assert_valid(assignment.state == AssignmentStateEnum.SUBMITTED, 'only a submitted assignment can be graded')
-        assertions.assert_valid(assignment.teacher_id == teacher_id, 'assignment 1 was submitted to teacher 1 and not teacher 2')
+        assertions.assert_auth(assignment.teacher_id == teacher_id, 'assignment 1 was submitted to teacher 1 and not teacher 2')
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
@@ -93,7 +93,7 @@ class Assignment(db.Model):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
-        assertions.assert_valid((assignment.state != AssignmentStateEnum.DRAFT), 'If an assignment is in Draft state, it cannot be graded by principal')
+        assertions.assert_true((assignment.state != AssignmentStateEnum.DRAFT), 'If an assignment is in Draft state, it cannot be graded by principal')
         
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
